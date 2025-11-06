@@ -8,19 +8,25 @@
 <script src="https://js.stripe.com/v3/"></script>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <style>
-  body{font-family:"Poppins",sans-serif;background:linear-gradient(135deg,#6a00ff,#b300ff);color:#fff;margin:0;padding:0;}
-  .container{max-width:600px;margin:40px auto;background:rgba(255,255,255,0.1);border-radius:12px;padding:25px;box-shadow:0 0 10px rgba(0,0,0,0.3);}
-  h1{text-align:center;font-weight:600;}
-  label{display:block;margin-top:12px;}
-  input,select,textarea{width:100%;padding:10px;border:none;border-radius:6px;margin-top:5px;}
-  #card-element{padding:10px;background:#fff;color:#000;border-radius:6px;}
-  button{margin-top:20px;padding:12px;width:100%;background:#b300ff;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;}
-  button:hover{background:#6a00ff;}
-  .total-box{margin-top:20px;background:rgba(0,0,0,0.2);border-radius:10px;padding:15px;font-size:14px;}
-  .total-box div{display:flex;justify-content:space-between;margin-bottom:6px;}
-  .popup{position:fixed;top:0;left:0;width:100%;height:100%;backdrop-filter:blur(10px);background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;color:#fff;font-size:18px;text-align:center;z-index:999;}
-  .fadeOut{animation:fadeOut 1s forwards;}
-  @keyframes fadeOut{to{opacity:0;visibility:hidden;}}
+ body{font-family:"Poppins",sans-serif;background:linear-gradient(135deg,#6a00ff,#b300ff);
+ color:#fff;margin:0;padding:0;}
+ .container{max-width:600px;margin:40px auto;background:rgba(255,255,255,0.1);
+ border-radius:12px;padding:25px;box-shadow:0 0 10px rgba(0,0,0,0.3);}
+ h1{text-align:center;font-weight:600;}
+ label{display:block;margin-top:12px;}
+ input,select,textarea{width:100%;padding:10px;border:none;border-radius:6px;margin-top:5px;}
+ #card-element{padding:10px;background:#fff;color:#000;border-radius:6px;}
+ button{margin-top:20px;padding:12px;width:100%;background:#b300ff;color:#fff;
+ border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;}
+ button:hover{background:#6a00ff;}
+ .total-box{margin-top:20px;background:rgba(0,0,0,0.2);border-radius:10px;
+ padding:15px;font-size:14px;}
+ .total-box div{display:flex;justify-content:space-between;margin-bottom:6px;}
+ .popup{position:fixed;top:0;left:0;width:100%;height:100%;backdrop-filter:blur(10px);
+ background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;
+ color:#fff;font-size:18px;text-align:center;z-index:999;}
+ .fadeOut{animation:fadeOut 1s forwards;}
+ @keyframes fadeOut{to{opacity:0;visibility:hidden;}}
 </style>
 </head>
 <body>
@@ -30,7 +36,22 @@
     <label>Full Name</label><input id="name" required>
     <label>Email</label><input id="email" type="email" required>
     <label>Phone (optional)</label><input id="phone">
-    <label>Bracelet Customization Text</label><textarea id="bracelet" rows="2" required></textarea>
+
+    <label>Bracelet Size</label>
+    <select id="size" required>
+      <option value="">Select</option>
+      <option value="6">Extra Small – $6</option>
+      <option value="9">Small – $9</option>
+      <option value="11">Medium – $11</option>
+      <option value="15">Large – $15</option>
+      <option value="20">Extra Large – $20</option>
+    </select>
+
+    <label>Bracelet Color</label>
+    <input id="braceletColor" placeholder="e.g. Purple Glow" required>
+
+    <label>Coupon Code (Optional, separate with comma to stack)</label>
+    <input id="coupon" placeholder="e.g. CHARM10BLACKF, CHRISTMAS35">
 
     <label>Shipping Option</label>
     <select id="shipping" required>
@@ -79,18 +100,21 @@
     <div id="card-element"></div>
 
     <div class="total-box">
-      <div><span>Bracelet:</span><span id="braceletCost">$0.00</span></div>
+      <div><span>Bracelet (Size price):</span><span id="braceletCost">$0.00</span></div>
       <div><span>Shipping:</span><span id="shipCost">$0.00</span></div>
       <div><span>Processing:</span><span id="procCost">$0.00</span></div>
+      <div><span>Coupon Discount:</span><span id="discCost">$0.00</span></div>
       <div><span>Fee/Tax:</span><span id="feeCost">$1.50</span></div>
-      <div style="border-top:1px solid #fff;margin-top:5px;padding-top:5px;"><b>Total:</b><b id="total">$0.00</b></div>
+      <div style="border-top:1px solid #fff;margin-top:5px;padding-top:5px;">
+        <b>Total:</b><b id="total">$0.00</b>
+      </div>
     </div>
 
     <button type="submit" id="pay-btn">Complete Order</button>
   </form>
 </div>
 
-<div id="popup" class="popup"><div id="popup-text">Processing your order... Please wait while Charmers securely completes your payment.</div></div>
+<div id="popup" class="popup"><div id="popup-text">Processing your order… Please wait while Charmers securely completes your payment.</div></div>
 
 <script>
 const stripe=Stripe("pk_live_51ReQgoHwN7YkNv6zwRaz8N1GO0PL7Bb3pqUbcxhss5cQQpJFKjoiNJR4DWKeTRWwhw2tmejOtXjbnrIg6sHnhxc600ePIEIgBc");
@@ -98,40 +122,59 @@ const elements=stripe.elements();
 const card=elements.create("card");
 card.mount("#card-element");
 
-// dynamic region labels
+// region label
 const regionLabel=document.getElementById("region-label");
-const regionMap={US:"State",CA:"Province",GB:"County",AU:"State / Territory",JP:"Prefecture",FR:"Region",DE:"Bundesland",IN:"State / Union Territory",BR:"State",ZA:"Province"};
+const regionMap={US:"State",CA:"Province",GB:"County",AU:"State / Territory",JP:"Prefecture",
+FR:"Region",DE:"Bundesland",IN:"State / Union Territory",BR:"State",ZA:"Province"};
 document.getElementById("country").addEventListener("change",e=>{
  regionLabel.textContent=regionMap[e.target.value]||"Region / State / Province";
 });
 
+// coupons
+function applyCoupons(subtotal){
+  const today=new Date();
+  const m=today.getMonth(); // 0-based
+  const d=today.getDate();
+  const codes=document.getElementById("coupon").value.toUpperCase().split(/[\s,]+/).filter(c=>c);
+  let discount=0;
+  codes.forEach(c=>{
+    if(c==="CHARM10BLACKF" && m===10 && d===28) discount+=0.5;
+    if(c==="CHRISTMAS35" && m===11) discount+=0.35;
+  });
+  const discounted=subtotal*(1-discount);
+  const discAmt=subtotal-discounted;
+  return {discounted,discAmt};
+}
+
 // totals
-function calcBraceletPrice(len){if(len>100)return 0;if(len>30)return 15;if(len>12)return 10;if(len>=6)return 6;return 3;}
 function updateTotals(){
-  const len=document.getElementById("bracelet").value.trim().length;
+  const size=parseFloat(document.getElementById("size").value||0);
   const ship=parseFloat(document.getElementById("shipping").value||0);
   const proc=parseFloat(document.getElementById("processing").value||0);
-  const braceletCost=calcBraceletPrice(len);
-  const total=braceletCost+ship+proc+1.5;
-  document.getElementById("braceletCost").textContent=`$${braceletCost.toFixed(2)}`;
+  const subtotal=size+ship+proc+1.5; // before coupons
+  const {discounted,discAmt}=applyCoupons(subtotal);
+  document.getElementById("braceletCost").textContent=`$${size.toFixed(2)}`;
   document.getElementById("shipCost").textContent=`$${ship.toFixed(2)}`;
   document.getElementById("procCost").textContent=`$${proc.toFixed(2)}`;
-  document.getElementById("total").textContent=`$${total.toFixed(2)}`;
-  return total.toFixed(2);
+  document.getElementById("discCost").textContent=`-$${discAmt.toFixed(2)}`;
+  document.getElementById("total").textContent=`$${discounted.toFixed(2)}`;
+  return discounted.toFixed(2);
 }
-["bracelet","shipping","processing"].forEach(id=>document.getElementById(id).addEventListener("input",updateTotals));
+["size","shipping","processing","coupon"].forEach(id=>document.getElementById(id).addEventListener("input",updateTotals));
 updateTotals();
 
 // popup helpers
 const popup=document.getElementById("popup");
 const popupText=document.getElementById("popup-text");
 function showPopup(msg){popupText.textContent=msg;popup.style.display="flex";}
-function hidePopup(){popup.classList.add("fadeOut");setTimeout(()=>{popup.style.display="none";popup.classList.remove("fadeOut");},1000);}
+function hidePopup(){popup.classList.add("fadeOut");
+ setTimeout(()=>{popup.style.display="none";popup.classList.remove("fadeOut");},1000);
+}
 
 // payment
 document.getElementById("checkout-form").addEventListener("submit",async e=>{
  e.preventDefault();
- showPopup("Processing your order... Please wait while Charmers securely completes your payment.");
+ showPopup("Processing your order… Please wait while Charmers securely completes your payment.");
  const total=updateTotals();
  try{
   const resp=await fetch("https://charmerspay.onrender.com/create-payment-intent",{
@@ -145,11 +188,12 @@ document.getElementById("checkout-form").addEventListener("submit",async e=>{
   });
   if(error){popupText.textContent=error.message;return;}
   if(paymentIntent.status==="succeeded"){
-    popupText.textContent="Payment successful! Preparing your order request...";
+    popupText.textContent="Payment successful! Opening email order request…";
     const name=document.getElementById("name").value;
     const email=document.getElementById("email").value;
     const phone=document.getElementById("phone").value;
-    const bracelet=document.getElementById("bracelet").value;
+    const color=document.getElementById("braceletColor").value;
+    const size=document.getElementById("size").selectedOptions[0].text;
     const country=document.getElementById("country").value;
     const region=document.getElementById("region").value;
     const city=document.getElementById("city").value;
@@ -158,13 +202,16 @@ document.getElementById("checkout-form").addEventListener("submit",async e=>{
     const postal=document.getElementById("postal").value;
     const shippingOpt=document.getElementById("shipping").selectedOptions[0].text;
     const processingOpt=document.getElementById("processing").selectedOptions[0].text;
+    const coupons=document.getElementById("coupon").value;
     const body=encodeURIComponent(
-`Order Request from Charmers Checkout
+`Charmers Order Request
 
 Name: ${name}
 Email: ${email}
 Phone: ${phone}
-Bracelet: ${bracelet}
+Bracelet Color: ${color}
+Bracelet Size: ${size}
+Coupons Used: ${coupons||"None"}
 Country: ${country}
 ${regionLabel.textContent}: ${region}
 City: ${city}
@@ -172,9 +219,9 @@ Address: ${address1} ${address2}
 Postal: ${postal}
 Shipping: ${shippingOpt}
 Processing: ${processingOpt}
-Total: $${total}
+Total Charged: $${total}
 
-This order has already been charged successfully through Charmers Pay.`
+This order has been paid successfully through Charmers Pay.`
     );
     window.location.href=`mailto:support@charmersbiz.org?subject=Charmers Order Request&body=${body}`;
     setTimeout(hidePopup,1000);
