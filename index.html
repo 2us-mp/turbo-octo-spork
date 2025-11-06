@@ -1,70 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Charmers Checkout</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
 <script src="https://js.stripe.com/v3/"></script>
-<script src="https://www.google.com/recaptcha/enterprise.js?render=6LeT6JArAAAAAKZDUSTu8Krw6i1sQshZnbgMoLvO"></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <style>
-  body{font-family:"Poppins",sans-serif;background:linear-gradient(135deg,#b300ff,#ff66cc);color:#fff;margin:0;padding:0;}
+  body{font-family:"Poppins",sans-serif;background:linear-gradient(135deg,#6a00ff,#b300ff);color:#fff;margin:0;padding:0;}
   .container{max-width:600px;margin:40px auto;background:rgba(255,255,255,0.1);border-radius:12px;padding:25px;box-shadow:0 0 10px rgba(0,0,0,0.3);}
   h1{text-align:center;font-weight:600;}
   label{display:block;margin-top:12px;}
   input,select,textarea{width:100%;padding:10px;border:none;border-radius:6px;margin-top:5px;}
   #card-element{padding:10px;background:#fff;color:#000;border-radius:6px;}
-  button{margin-top:20px;padding:12px;width:100%;background:#ff66cc;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;}
-  button:hover{background:#b300ff;}
-  .hidden{display:none;}
-  .tos{margin-top:10px;}
-  .total{margin-top:15px;font-size:18px;font-weight:600;text-align:center;}
+  button{margin-top:20px;padding:12px;width:100%;background:#b300ff;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;}
+  button:hover{background:#6a00ff;}
+  .total-box{margin-top:20px;background:rgba(0,0,0,0.2);border-radius:10px;padding:15px;font-size:14px;}
+  .total-box div{display:flex;justify-content:space-between;margin-bottom:6px;}
+  .popup{position:fixed;top:0;left:0;width:100%;height:100%;backdrop-filter:blur(10px);background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;color:#fff;font-size:18px;text-align:center;z-index:999;}
+  .fadeOut{animation:fadeOut 1s forwards;}
+  @keyframes fadeOut{to{opacity:0;visibility:hidden;}}
 </style>
 </head>
 <body>
 <div class="container">
   <h1>Charmers Checkout</h1>
-
   <form id="checkout-form">
-    <label for="name">Full Name</label>
-    <input id="name" required>
+    <label>Full Name</label><input id="name" required>
+    <label>Email</label><input id="email" type="email" required>
+    <label>Phone (optional)</label><input id="phone">
+    <label>Bracelet Customization Text</label><textarea id="bracelet" rows="2" required></textarea>
 
-    <label for="email">Email</label>
-    <input id="email" type="email" required>
-
-    <label for="phone">Phone (optional)</label>
-    <input id="phone">
-
-    <label for="bracelet">Bracelet Customization Text</label>
-    <textarea id="bracelet" rows="2" required></textarea>
-
-    <!-- 📦 USPS Shipping -->
-    <label for="shipping">Shipping Option</label>
+    <label>Shipping Option</label>
     <select id="shipping" required>
-      <option value="">Select Shipping Service</option>
-      <optgroup label="Domestic (USA)">
-        <option value="9">USPS Ground Advantage — $9</option>
-        <option value="13">USPS Priority Mail — $13</option>
-        <option value="25">USPS Priority Mail Express — $25</option>
-      </optgroup>
-      <optgroup label="International (Trackable)">
-        <option value="78">USPS Priority Mail International — $78</option>
-        <option value="95">USPS Priority Mail Express International — $95</option>
-      </optgroup>
+      <option value="">Select</option>
+      <option value="9">USPS Ground Advantage — $9</option>
+      <option value="13">USPS Priority Mail — $13</option>
+      <option value="25">USPS Priority Mail Express — $25</option>
+      <option value="78">USPS Priority Mail International — $78</option>
+      <option value="95">USPS Priority Mail Express International — $95</option>
     </select>
 
-    <!-- ⚙️ CLU Processing -->
-    <label for="processing">Processing Option</label>
+    <label>Processing Option</label>
     <select id="processing" required>
-      <option value="0">CLU ground processing — Free</option>
-      <option value="0.75">CLU priority processing — $0.75</option>
-      <option value="1.00">CLU express processing — $1.00</option>
+      <option value="0">CLU Ground Processing — Free</option>
+      <option value="0.75">CLU Priority Processing — $0.75</option>
+      <option value="1.00">CLU Express Processing — $1.00</option>
     </select>
 
-    <!-- 🌍 Country / Region -->
-    <label for="country">Country</label>
+    <label>Country</label>
     <select id="country" required>
-      <option value="">Select country</option>
+      <option value="">Select</option>
       <option value="US">United States</option>
       <option value="CA">Canada</option>
       <option value="GB">United Kingdom</option>
@@ -77,34 +64,33 @@
       <option value="ZA">South Africa</option>
     </select>
 
-    <label id="region-label" for="region">State</label>
-    <input id="region" required>
-
-    <label for="city">City</label>
-    <input id="city" required>
-
-    <label for="address1">Street Address</label>
-    <input id="address1" required>
-
-    <label for="address2">Street Address 2 (optional)</label>
-    <input id="address2">
-
-    <label for="postal">Postal Code</label>
-    <input id="postal" required>
+    <label id="region-label" for="region">State</label><input id="region" required>
+    <label>City</label><input id="city" required>
+    <label>Street Address</label><input id="address1" required>
+    <label>Street Address 2 (optional)</label><input id="address2">
+    <label>Postal Code</label><input id="postal" required>
 
     <div class="tos">
       <input type="checkbox" id="tos" required>
       <label for="tos">By buying from Charmers you agree to our ToS and usage policies.</label>
     </div>
 
+    <div class="g-recaptcha" data-sitekey="6LeT6JArAAAAAKZDUSTu8Krw6i1sQshZnbgMoLvO"></div>
     <div id="card-element"></div>
-    <div class="total" id="total">Total: $0.00</div>
+
+    <div class="total-box">
+      <div><span>Bracelet:</span><span id="braceletCost">$0.00</span></div>
+      <div><span>Shipping:</span><span id="shipCost">$0.00</span></div>
+      <div><span>Processing:</span><span id="procCost">$0.00</span></div>
+      <div><span>Fee/Tax:</span><span id="feeCost">$1.50</span></div>
+      <div style="border-top:1px solid #fff;margin-top:5px;padding-top:5px;"><b>Total:</b><b id="total">$0.00</b></div>
+    </div>
 
     <button type="submit" id="pay-btn">Complete Order</button>
   </form>
-
-  <button id="email-btn" class="hidden">Email Order Request</button>
 </div>
+
+<div id="popup" class="popup"><div id="popup-text">Processing your order... Please wait while Charmers securely completes your payment.</div></div>
 
 <script>
 const stripe=Stripe("pk_live_51ReQgoHwN7YkNv6zwRaz8N1GO0PL7Bb3pqUbcxhss5cQQpJFKjoiNJR4DWKeTRWwhw2tmejOtXjbnrIg6sHnhxc600ePIEIgBc");
@@ -112,86 +98,90 @@ const elements=stripe.elements();
 const card=elements.create("card");
 card.mount("#card-element");
 
-// price calc
-const bracelet=document.getElementById("bracelet");
-const shipping=document.getElementById("shipping");
-const processing=document.getElementById("processing");
-const totalDisplay=document.getElementById("total");
-function calcBraceletPrice(len){if(len>100)return 0;if(len>30)return 15;if(len>12)return 10;if(len>=6)return 6;return 3;}
-function updateTotal(){
- const len=bracelet.value.trim().length;
- const ship=parseFloat(shipping.value||0);
- const proc=parseFloat(processing.value||0);
- const braceletCost=calcBraceletPrice(len);
- const total=braceletCost+ship+proc+1.5; // Stripe + tax fee
- totalDisplay.textContent=`Total: $${total.toFixed(2)}`;
- return total.toFixed(2);
-}
-[bracelet,shipping,processing].forEach(e=>e.addEventListener("input",updateTotal));
-[shipping,processing].forEach(e=>e.addEventListener("change",updateTotal));
-
 // dynamic region labels
 const regionLabel=document.getElementById("region-label");
-const regionMap={
- US:"State",
- CA:"Province",
- GB:"County",
- AU:"State / Territory",
- JP:"Prefecture",
- FR:"Region",
- DE:"Bundesland",
- IN:"State / Union Territory",
- BR:"State",
- ZA:"Province"
-};
+const regionMap={US:"State",CA:"Province",GB:"County",AU:"State / Territory",JP:"Prefecture",FR:"Region",DE:"Bundesland",IN:"State / Union Territory",BR:"State",ZA:"Province"};
 document.getElementById("country").addEventListener("change",e=>{
- const code=e.target.value;
- regionLabel.textContent=regionMap[code] || "Region / State / Province";
+ regionLabel.textContent=regionMap[e.target.value]||"Region / State / Province";
 });
+
+// totals
+function calcBraceletPrice(len){if(len>100)return 0;if(len>30)return 15;if(len>12)return 10;if(len>=6)return 6;return 3;}
+function updateTotals(){
+  const len=document.getElementById("bracelet").value.trim().length;
+  const ship=parseFloat(document.getElementById("shipping").value||0);
+  const proc=parseFloat(document.getElementById("processing").value||0);
+  const braceletCost=calcBraceletPrice(len);
+  const total=braceletCost+ship+proc+1.5;
+  document.getElementById("braceletCost").textContent=`$${braceletCost.toFixed(2)}`;
+  document.getElementById("shipCost").textContent=`$${ship.toFixed(2)}`;
+  document.getElementById("procCost").textContent=`$${proc.toFixed(2)}`;
+  document.getElementById("total").textContent=`$${total.toFixed(2)}`;
+  return total.toFixed(2);
+}
+["bracelet","shipping","processing"].forEach(id=>document.getElementById(id).addEventListener("input",updateTotals));
+updateTotals();
+
+// popup helpers
+const popup=document.getElementById("popup");
+const popupText=document.getElementById("popup-text");
+function showPopup(msg){popupText.textContent=msg;popup.style.display="flex";}
+function hidePopup(){popup.classList.add("fadeOut");setTimeout(()=>{popup.style.display="none";popup.classList.remove("fadeOut");},1000);}
 
 // payment
-document.getElementById("checkout-form").addEventListener("submit",async(e)=>{
+document.getElementById("checkout-form").addEventListener("submit",async e=>{
  e.preventDefault();
- const total=updateTotal();
- document.getElementById("pay-btn").disabled=true;
- grecaptcha.enterprise.ready(async()=>{
-  const token=await grecaptcha.enterprise.execute('6LeT6JArAAAAAKZDUSTu8Krw6i1sQshZnbgMoLvO',{action:'checkout'});
+ showPopup("Processing your order... Please wait while Charmers securely completes your payment.");
+ const total=updateTotals();
+ try{
   const resp=await fetch("https://charmerspay.onrender.com/create-payment-intent",{
-   method:"POST",headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({amount:Math.round(total*100),token})
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({amount:Math.round(total*100)})
   });
+  if(!resp.ok)throw new Error("Charmers backend temporarily unavailable.");
   const data=await resp.json();
   const {error,paymentIntent}=await stripe.confirmCardPayment(data.clientSecret,{
-   payment_method:{card:card,billing_details:{name:document.getElementById("name").value,email:document.getElementById("email").value}}
+    payment_method:{card:card,billing_details:{name:document.getElementById("name").value,email:document.getElementById("email").value}}
   });
-  if(error){alert(error.message);document.getElementById("pay-btn").disabled=false;return;}
+  if(error){popupText.textContent=error.message;return;}
   if(paymentIntent.status==="succeeded"){
-   alert("Payment succeeded! Now press ‘Email Order Request’."); 
-   document.getElementById("email-btn").classList.remove("hidden");
-   document.getElementById("pay-btn").disabled=true;
-  }
- });
-});
+    popupText.textContent="Payment successful! Preparing your order request...";
+    const name=document.getElementById("name").value;
+    const email=document.getElementById("email").value;
+    const phone=document.getElementById("phone").value;
+    const bracelet=document.getElementById("bracelet").value;
+    const country=document.getElementById("country").value;
+    const region=document.getElementById("region").value;
+    const city=document.getElementById("city").value;
+    const address1=document.getElementById("address1").value;
+    const address2=document.getElementById("address2").value;
+    const postal=document.getElementById("postal").value;
+    const shippingOpt=document.getElementById("shipping").selectedOptions[0].text;
+    const processingOpt=document.getElementById("processing").selectedOptions[0].text;
+    const body=encodeURIComponent(
+`Order Request from Charmers Checkout
 
-// email order
-document.getElementById("email-btn").addEventListener("click",()=>{
- const name=document.getElementById("name").value;
- const email=document.getElementById("email").value;
- const phone=document.getElementById("phone").value;
- const bracelet=document.getElementById("bracelet").value;
- const total=updateTotal();
- const country=document.getElementById("country").value;
- const region=document.getElementById("region").value;
- const city=document.getElementById("city").value;
- const address1=document.getElementById("address1").value;
- const address2=document.getElementById("address2").value;
- const postal=document.getElementById("postal").value;
- const shippingOpt=document.getElementById("shipping").selectedOptions[0].text;
- const processingOpt=document.getElementById("processing").selectedOptions[0].text;
- const body=encodeURIComponent(
-  `Order Details:\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nBracelet: ${bracelet}\nCountry: ${country}\n${regionLabel.textContent}: ${region}\nCity: ${city}\nAddress: ${address1} ${address2}\nPostal: ${postal}\nShipping: ${shippingOpt}\nProcessing: ${processingOpt}\nTotal: $${total}\n\nThank you for shopping with Charmers!`
- );
- window.location.href=`mailto:support@charmersbiz.org?subject=New Charmers Order&body=${body}`;
+Name: ${name}
+Email: ${email}
+Phone: ${phone}
+Bracelet: ${bracelet}
+Country: ${country}
+${regionLabel.textContent}: ${region}
+City: ${city}
+Address: ${address1} ${address2}
+Postal: ${postal}
+Shipping: ${shippingOpt}
+Processing: ${processingOpt}
+Total: $${total}
+
+This order has already been charged successfully through Charmers Pay.`
+    );
+    window.location.href=`mailto:support@charmersbiz.org?subject=Charmers Order Request&body=${body}`;
+    setTimeout(hidePopup,1000);
+  }
+ }catch(err){
+  popupText.textContent=err.message||"Unexpected error occurred.";
+ }
 });
 </script>
 </body>
