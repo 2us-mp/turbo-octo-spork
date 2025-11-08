@@ -177,7 +177,7 @@ document.getElementById("checkout-form").addEventListener("submit",async e=>{
  showPopup("Processing your order… Please wait while Charmers securely completes your payment.");
  const total=updateTotals();
  try{
-  const resp=await fetch("https://charmerspay.onrender.com/create-payment-intent",{
+  const resp=await fetch("https://pay-charmersv2.onrender.com/create-payment-intent",{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({amount:Math.round(total*100)})
   });
