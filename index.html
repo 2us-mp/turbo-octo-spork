@@ -1,363 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Charmers – Custom Bracelets</title>
+<meta charset="UTF-8">
+<title>Charmers Checkout</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://js.stripe.com/v3/"></script>
 
 <style>
-/* ---------------- GLOBAL STYLES ---------------- */
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background: #ffffff;
-  color: #222;
-  text-align: center;
-}
-
-section {
-  padding: 40px 20px;
-  max-width: 900px;
-  margin: auto;
-}
-
-h2 { color: #a84dd1; margin-top: 0; }
-
-/* ---------------- HEADER ---------------- */
-header {
-  background: linear-gradient(135deg, #a84dd1, #d66bff);
-  padding: 45px 20px 60px;
-  color: white;
-  position: relative;
-}
-header h1 {
-  margin: 0;
-  font-size: 45px;
-  font-style: italic;
-}
-header p { margin-top: 8px; }
-
-/* Sparkles */
-.sparkle {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  background: rgba(255,255,255,0.85);
-  border-radius: 50%;
-  animation: float 4s infinite ease-in-out;
-}
-.s1 { left: 10%; top: 15%; animation-delay: 0s; }
-.s2 { left: 30%; top: 8%; animation-delay: 1s; }
-.s3 { left: 55%; top: 18%; animation-delay: 0.5s; }
-.s4 { left: 75%; top: 10%; animation-delay: 1.5s; }
-.s5 { left: 90%; top: 20%; animation-delay: 0.3s; }
-
-@keyframes float {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0); }
-}
-
-/* ---------------- NAVIGATION ---------------- */
-nav {
-  background: #fff;
-  border-bottom: 1px solid #eee;
-}
-nav a {
-  display: inline-block;
-  margin: 10px;
-  padding: 10px 15px;
-  background: #a84dd1;
-  color: white;
-  text-decoration: none;
-  border-radius: 6px;
-}
-nav a:hover { background: #8a34b5; }
-
-/* ---------------- CARDS ---------------- */
-.card {
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  padding: 16px;
-  width: 260px;
-  margin: 15px;
-  display: inline-block;
-  vertical-align: top;
-}
-.card img {
-  width: 100%;
-  border-radius: 8px;
-}
-
-/* ---------------- CALCULATOR ---------------- */
-.calc-box {
-  padding: 20px;
-  background: #f5e1ff;
-  border-radius: 12px;
-  max-width: 400px;
-  margin: auto;
-}
-.calc-box select,
-.calc-box input {
-  width: 90%;
-  padding: 8px;
-  margin: 6px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-.button {
-  display: inline-block;
-  background: #a84dd1;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 8px;
-  text-decoration: none;
-  cursor: pointer;
-  margin-top: 10px;
-}
-.button:hover { background: #8a34b5; }
-
-/* ---------------- TRACKER ---------------- */
-.tracker {
-  background: #eae2ff;
-  padding: 20px;
-  border-radius: 12px;
-  max-width: 420px;
-  margin: auto;
-}
-
-/* ---------------- ORDER FORM ---------------- */
-.form-box {
-  background: #fff0ff;
-  padding: 25px;
-  border-radius: 12px;
-  max-width: 700px;
-  margin: auto;
-  text-align: left;
-}
-.form-box input,
-.form-box select,
-.form-box textarea {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #bbb;
-  margin-bottom: 15px;
-  font-size: 1rem;
-}
-
-/* ---------------- FOOTER ---------------- */
-footer {
-  background: #fafafa;
-  padding: 25px;
-  color: #555;
-  font-size: 14px;
-  border-top: 1px solid #ddd;
-}
-footer a { color: #a84dd1; }
+    body {
+        font-family: Arial, sans-serif;
+        background: #faf5ff;
+        margin: 0;
+        padding: 0;
+        color: #222;
+    }
+    header {
+        background: linear-gradient(90deg, #b026ff, #ff4dd8);
+        padding: 20px;
+        text-align: center;
+        color: white;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.15);
+    }
+    label { font-weight: bold; display: block; margin-top: 12px; }
+    input, select, textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 6px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+    button {
+        width: 100%;
+        padding: 15px;
+        margin-top: 20px;
+        background: #b026ff;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 18px;
+        cursor: pointer;
+    }
+    button:hover {
+        background: #8b1acc;
+    }
+    #successBox, #errorBox {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 10px;
+        font-weight: bold;
+        display: none;
+    }
+    #successBox { background: #d2ffda; color: #005f1a; }
+    #errorBox { background: #ffd5d5; color: #7a0000; }
 
 </style>
-
 </head>
 <body>
 
-<header>
-  <h1>Charmers</h1>
-  <p>Custom handmade bracelets — designed with creativity and care.</p>
+<header>Charmers Checkout</header>
 
-  <div class="sparkle s1"></div>
-  <div class="sparkle s2"></div>
-  <div class="sparkle s3"></div>
-  <div class="sparkle s4"></div>
-  <div class="sparkle s5"></div>
-</header>
+<div class="container">
 
-<nav>
-  <a href="#home">Home</a>
-  <a href="#order">Order</a>
-  <a href="#faq">FAQ</a>
-  <a href="#about">About</a>
-  <a href="#careers">Careers</a>
-  <a href="#sponsored">Sponsored Careers</a>
-  <a href="#live">Live Chat</a>
-</nav>
+<h2>Customer Information</h2>
 
+<label>Name</label>
+<input id="nameInput">
 
+<label>Email</label>
+<input id="emailInput">
 
-<!-- =============================== HOME =============================== -->
-<section id="home">
-  <h2>Our Bracelets</h2>
-  <p>Small $5 · Medium $9 · Large $11 · Extra Large $15</p>
+<label>Phone (optional)</label>
+<input id="phoneInput">
 
-  <div class="card">
-    <h3>Bracelet Style 1</h3>
-    <img src="https://i.imgur.com/1jKpRxJ.jpeg">
-  </div>
+<label>Bracelet Text</label>
+<textarea id="braceletText"></textarea>
 
-  <div class="card">
-    <h3>Bracelet Style 2</h3>
-    <img src="https://i.imgur.com/d2Jk3g6.jpeg">
-  </div>
+<label>Shipping Option</label>
+<select id="shippingOption">
+<option value="9">USPS Ground Advantage — $9</option>
+<option value="11">USPS Priority Mail — $11</option>
+<option value="29">USPS Priority Mail Express — $29</option>
+<option value="93">UPS Worldwide Expedited — $93</option>
+<option value="119">UPS Worldwide Express — $119</option>
+<option value="178">USPS Priority Mail Express International — $178</option>
+</select>
 
-  <h2>Estimate Total</h2>
-  <div class="calc-box">
-    <select id="bracelet">
-      <option value="5">Small — $5</option>
-      <option value="9">Medium — $9</option>
-      <option value="11">Large — $11</option>
-      <option value="15">XL — $15</option>
-    </select>
+<label>Processing Option</label>
+<select id="processingOption">
+<option value="0.50">Charmers 24 Hour Processing — $0.50</option>
+<option value="0">Charmers Seven Day 12 Hours — Free</option>
+</select>
 
-    <select id="processing">
-      <option value="0.50">Charmers 24 Hour Processing™ — $0.50</option>
-      <option value="0.00">Charmers Seven Day 12 Hour Processing™ — FREE</option>
-    </select>
+<label>Street Address</label>
+<input id="street1">
 
-    <select id="shipping">
-      <option value="9">USPS Ground Advantage — $9</option>
-      <option value="11">USPS Priority Mail — $11</option>
-      <option value="29">USPS Priority Mail Express — $29</option>
-      <option value="93">UPS Worldwide Expedited — $93</option>
-      <option value="119">UPS Worldwide Express — $119</option>
-      <option value="178">USPS PMEI — $178</option>
-    </select>
+<label>Street Address 2 (optional)</label>
+<input id="street2">
 
-    <input id="qty" type="number" value="1" min="1" />
+<label>City</label>
+<input id="city">
 
-    <div class="button" onclick="calcTotal()">Calculate</div>
-    <p id="result"></p>
-  </div>
+<label>State / Territory</label>
+<input id="state">
 
-  <script>
-  function calcTotal() {
-    let b = parseFloat(document.getElementById("bracelet").value);
-    let p = parseFloat(document.getElementById("processing").value);
-    let s = parseFloat(document.getElementById("shipping").value);
-    let q = parseInt(document.getElementById("qty").value);
+<label>Postal Code</label>
+<input id="zip">
 
-    let subtotal = (b*q) + p + s;
-    let stripe = subtotal * 0.029 + 0.30;
-    let tax = subtotal * 0.07;
-    let total = subtotal + stripe + tax;
+<label>Country</label>
+<input id="country" value="USA">
 
-    document.getElementById("result").innerHTML =
-      "Estimated Total: $" + total.toFixed(2);
-  }
-  </script>
+<h2>Payment</h2>
 
-  <h2>CLU Tracking Snapshot</h2>
-  <div class="tracker">
-    <p><b>Status:</b> Departed Franklin TN Facility</p>
-    <p><b>Next Stop:</b> Centerville, TN</p>
-    <p>Tracking courtesy of Charmers Logistics Union</p>
-  </div>
-</section>
+<div id="payment-request-button"></div>
+<div id="card-element"></div>
 
+<button id="payBtn">Complete Order</button>
 
+<div id="successBox">Your order was processed. Expect a confirmation email from Charmers soon.</div>
+<div id="errorBox"></div>
 
-<!-- =============================== ORDER FORM =============================== -->
-<section id="order">
-  <h2>Order a Bracelet</h2>
-  <p>Fill out the form below. After submitting, Charmers will process your order manually.</p>
+</div>
 
-  <div class="form-box">
-    <h3>Your Information</h3>
+<script>
+const stripe = Stripe("pk_live_51ReQgoHwN7YkNv6zwRaz8N1GO0PL7Bb3pqUbcxhss5cQQpJFKjoiNJR4DWKeTRWwhw2tmejOtXjbnrIg6sHnhxc600ePIEIgBc");
 
-    <input placeholder="Full Name">
-    <input placeholder="Email">
-    <input placeholder="Phone (optional)">
+const card = stripe.elements().create("card", { hidePostalCode: true });
+card.mount("#card-element");
 
-    <h3>Bracelet Details</h3>
+document.getElementById("payBtn").addEventListener("click", async () => {
 
-    <select>
-      <option>Small – $5</option>
-      <option>Medium – $9</option>
-      <option>Large – $11</option>
-      <option>Extra Large – $15</option>
-    </select>
+    const braceletText = document.getElementById("braceletText").value.trim();
 
-    <input placeholder="Color Theme (Purple, Rainbow, etc.)">
-    <textarea placeholder="Bracelet Text / Name / Phrase"></textarea>
+    // Bracelet pricing rules
+    let braceletCost = 3;
+    if (braceletText.length > 100) { alert("Too many characters."); return; }
+    if (braceletText.length > 30) braceletCost = 15;
+    else if (braceletText.length > 12) braceletCost = 10;
+    else if (braceletText.length >= 6) braceletCost = 6;
 
-    <h3>Shipping Address</h3>
+    const shipping = parseFloat(document.getElementById("shippingOption").value);
+    const processingFee = parseFloat(document.getElementById("processingOption").value);
 
-    <input placeholder="Street Address">
-    <input placeholder="Apt / Suite (optional)">
-    <input placeholder="City">
-    <input placeholder="State">
-    <input placeholder="Postal Code">
-    <input placeholder="Country (default: USA)" value="USA">
+    // Fake tax + Stripe fee (undisclosed)
+    const tax = braceletCost * 0.07;
+    const stripeFee = (braceletCost + shipping + processingFee) * 0.029 + 0.30;
 
-    <h3>Shipping Options</h3>
-    <select>
-      <option>USPS Ground Advantage</option>
-      <option>USPS Priority Mail</option>
-      <option>USPS Priority Mail Express</option>
-      <option>UPS Worldwide Expedited (international)</option>
-      <option>UPS Worldwide Express (international)</option>
-      <option>USPS PMEI (international)</option>
-    </select>
+    const total = Math.round((braceletCost + shipping + processingFee + tax + stripeFee) * 100);
 
-    <br><br>
-    <div class="button">Submit Order (coming soon)</div>
-  </div>
-</section>
+    const orderData = {
+        name: document.getElementById("nameInput").value,
+        email: document.getElementById("emailInput").value,
+        phone: document.getElementById("phoneInput").value,
+        braceletText,
+        shipping,
+        processingFee,
+        street1: document.getElementById("street1").value,
+        street2: document.getElementById("street2").value,
+        city: document.getElementById("city").value,
+        state: document.getElementById("state").value,
+        zip: document.getElementById("zip").value,
+        country: document.getElementById("country").value
+    };
 
+    const res = await fetch("https://Pay-Charmersv2.onrender.com/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            amount: total,
+            orderDetails: orderData,
+            customerInfo: orderData
+        })
+    });
 
+    const data = await res.json();
 
-<!-- =============================== FAQ =============================== -->
-<section id="faq">
-  <h2>FAQ</h2>
+    if (!data.clientSecret) {
+        document.getElementById("errorBox").style.display = "block";
+        document.getElementById("errorBox").textContent = "Payment failed.";
+        return;
+    }
 
-  <h3>How long does shipping take?</h3>
-  <p>Depends on USPS or UPS service chosen.</p>
+    const result = await stripe.confirmCardPayment(data.clientSecret, {
+        payment_method: { card }
+    });
 
-  <h3>Do you ship internationally?</h3>
-  <p>Yes — international rates are higher.</p>
-
-  <h3>How do I track my order?</h3>
-  <p>You receive a tracking number by text or email.</p>
-</section>
-
-
-
-<!-- =============================== ABOUT =============================== -->
-<section id="about">
-  <h2>About Charmers</h2>
-  <p>Charmers is a youth-run bracelet company using CLU + USPS to deliver custom designs.</p>
-</section>
-
-
-
-<!-- =============================== CAREERS =============================== -->
-<section id="careers">
-  <h2>Careers</h2>
-  <p>Charmers roles are limited — usually part-time or project-based.</p>
-</section>
-
-
-
-<!-- =============================== SPONSORED CAREERS =============================== -->
-<section id="sponsored">
-  <h2>Sponsored Careers</h2>
-  <p>No active sponsored career listings at this time.</p>
-</section>
-
-
-
-<!-- =============================== LIVE CHAT =============================== -->
-<section id="live">
-  <h2>Live Chat</h2>
-  <p>Coming soon. For now call or text Charmers.</p>
-</section>
-
-
-
-<footer>
-  © 2025 Charmers • All Rights Reserved  
-  <br>
-  support@charmersbiz.org • +1 (931) 623-0425 • +1 (931) 505-1417
-</footer>
+    if (result.error) {
+        document.getElementById("errorBox").style.display = "block";
+        if (result.error.code === "card_declined") {
+            document.getElementById("errorBox").textContent = "The card was declined by your bank, try again later.";
+        } else if (result.error.code === "incorrect_number") {
+            document.getElementById("errorBox").textContent = "Check the card number.";
+        } else {
+            document.getElementById("errorBox").textContent = "Payment failed.";
+        }
+    } else {
+        document.getElementById("successBox").style.display = "block";
+    }
+});
+</script>
 
 </body>
 </html>
