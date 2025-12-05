@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Charmers – Custom Bracelets</title>
+
+<style>
+/* ---------------- GLOBAL STYLES ---------------- */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #ffffff;
+  color: #222;
+  text-align: center;
+}
+
+section {
+  padding: 40px 20px;
+  max-width: 900px;
+  margin: auto;
+}
+
+h2 { color: #a84dd1; margin-top: 0; }
+
+/* ---------------- HEADER ---------------- */
+header {
+  background: linear-gradient(135deg, #a84dd1, #d66bff);
+  padding: 45px 20px 60px;
+  color: white;
+  position: relative;
+}
+header h1 {
+  margin: 0;
+  font-size: 45px;
+  font-style: italic;
+}
+header p { margin-top: 8px; }
+
+/* Sparkles */
+.sparkle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: rgba(255,255,255,0.85);
+  border-radius: 50%;
+  animation: float 4s infinite ease-in-out;
+}
+.s1 { left: 10%; top: 15%; animation-delay: 0s; }
+.s2 { left: 30%; top: 8%; animation-delay: 1s; }
+.s3 { left: 55%; top: 18%; animation-delay: 0.5s; }
+.s4 { left: 75%; top: 10%; animation-delay: 1.5s; }
+.s5 { left: 90%; top: 20%; animation-delay: 0.3s; }
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+/* ---------------- NAVIGATION ---------------- */
+nav {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+nav a {
+  display: inline-block;
+  margin: 10px;
+  padding: 10px 15px;
+  background: #a84dd1;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+}
+nav a:hover { background: #8a34b5; }
+
+/* ---------------- CARDS ---------------- */
+.card {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 16px;
+  width: 260px;
+  margin: 15px;
+  display: inline-block;
+  vertical-align: top;
+}
+.card img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+/* ---------------- CALCULATOR ---------------- */
+.calc-box {
+  padding: 20px;
+  background: #f5e1ff;
+  border-radius: 12px;
+  max-width: 400px;
+  margin: auto;
+}
+.calc-box select,
+.calc-box input {
+  width: 90%;
+  padding: 8px;
+  margin: 6px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+.button {
+  display: inline-block;
+  background: #a84dd1;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+.button:hover { background: #8a34b5; }
+
+/* ---------------- TRACKER ---------------- */
+.tracker {
+  background: #eae2ff;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 420px;
+  margin: auto;
+}
+
+/* ---------------- ORDER FORM ---------------- */
+.form-box {
+  background: #fff0ff;
+  padding: 25px;
+  border-radius: 12px;
+  max-width: 700px;
+  margin: auto;
+  text-align: left;
+}
+.form-box input,
+.form-box select,
+.form-box textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #bbb;
+  margin-bottom: 15px;
+  font-size: 1rem;
+}
+
+/* ---------------- FOOTER ---------------- */
+footer {
+  background: #fafafa;
+  padding: 25px;
+  color: #555;
+  font-size: 14px;
+  border-top: 1px solid #ddd;
+}
+footer a { color: #a84dd1; }
+
+</style>
+
+</head>
+<body>
+
+<header>
+  <h1>Charmers</h1>
+  <p>Custom handmade bracelets — designed with creativity and care.</p>
+
+  <div class="sparkle s1"></div>
+  <div class="sparkle s2"></div>
+  <div class="sparkle s3"></div>
+  <div class="sparkle s4"></div>
+  <div class="sparkle s5"></div>
+</header>
+
+<nav>
+  <a href="#home">Home</a>
+  <a href="#order">Order</a>
+  <a href="#faq">FAQ</a>
+  <a href="#about">About</a>
+  <a href="#careers">Careers</a>
+  <a href="#sponsored">Sponsored Careers</a>
+  <a href="#live">Live Chat</a>
+</nav>
+
+
+
+<!-- =============================== HOME =============================== -->
+<section id="home">
+  <h2>Our Bracelets</h2>
+  <p>Small $5 · Medium $9 · Large $11 · Extra Large $15</p>
+
+  <div class="card">
+    <h3>Bracelet Style 1</h3>
+    <img src="https://i.imgur.com/1jKpRxJ.jpeg">
+  </div>
+
+  <div class="card">
+    <h3>Bracelet Style 2</h3>
+    <img src="https://i.imgur.com/d2Jk3g6.jpeg">
+  </div>
+
+  <h2>Estimate Total</h2>
+  <div class="calc-box">
+    <select id="bracelet">
+      <option value="5">Small — $5</option>
+      <option value="9">Medium — $9</option>
+      <option value="11">Large — $11</option>
+      <option value="15">XL — $15</option>
+    </select>
+
+    <select id="processing">
+      <option value="0.50">Charmers 24 Hour Processing™ — $0.50</option>
+      <option value="0.00">Charmers Seven Day 12 Hour Processing™ — FREE</option>
+    </select>
+
+    <select id="shipping">
+      <option value="9">USPS Ground Advantage — $9</option>
+      <option value="11">USPS Priority Mail — $11</option>
+      <option value="29">USPS Priority Mail Express — $29</option>
+      <option value="93">UPS Worldwide Expedited — $93</option>
+      <option value="119">UPS Worldwide Express — $119</option>
+      <option value="178">USPS PMEI — $178</option>
+    </select>
+
+    <input id="qty" type="number" value="1" min="1" />
+
+    <div class="button" onclick="calcTotal()">Calculate</div>
+    <p id="result"></p>
+  </div>
+
+  <script>
+  function calcTotal() {
+    let b = parseFloat(document.getElementById("bracelet").value);
+    let p = parseFloat(document.getElementById("processing").value);
+    let s = parseFloat(document.getElementById("shipping").value);
+    let q = parseInt(document.getElementById("qty").value);
+
+    let subtotal = (b*q) + p + s;
+    let stripe = subtotal * 0.029 + 0.30;
+    let tax = subtotal * 0.07;
+    let total = subtotal + stripe + tax;
+
+    document.getElementById("result").innerHTML =
+      "Estimated Total: $" + total.toFixed(2);
+  }
+  </script>
+
+  <h2>CLU Tracking Snapshot</h2>
+  <div class="tracker">
+    <p><b>Status:</b> Departed Franklin TN Facility</p>
+    <p><b>Next Stop:</b> Centerville, TN</p>
+    <p>Tracking courtesy of Charmers Logistics Union</p>
+  </div>
+</section>
+
+
+
+<!-- =============================== ORDER FORM =============================== -->
+<section id="order">
+  <h2>Order a Bracelet</h2>
+  <p>Fill out the form below. After submitting, Charmers will process your order manually.</p>
+
+  <div class="form-box">
+    <h3>Your Information</h3>
+
+    <input placeholder="Full Name">
+    <input placeholder="Email">
+    <input placeholder="Phone (optional)">
+
+    <h3>Bracelet Details</h3>
+
+    <select>
+      <option>Small – $5</option>
+      <option>Medium – $9</option>
+      <option>Large – $11</option>
+      <option>Extra Large – $15</option>
+    </select>
+
+    <input placeholder="Color Theme (Purple, Rainbow, etc.)">
+    <textarea placeholder="Bracelet Text / Name / Phrase"></textarea>
+
+    <h3>Shipping Address</h3>
+
+    <input placeholder="Street Address">
+    <input placeholder="Apt / Suite (optional)">
+    <input placeholder="City">
+    <input placeholder="State">
+    <input placeholder="Postal Code">
+    <input placeholder="Country (default: USA)" value="USA">
+
+    <h3>Shipping Options</h3>
+    <select>
+      <option>USPS Ground Advantage</option>
+      <option>USPS Priority Mail</option>
+      <option>USPS Priority Mail Express</option>
+      <option>UPS Worldwide Expedited (international)</option>
+      <option>UPS Worldwide Express (international)</option>
+      <option>USPS PMEI (international)</option>
+    </select>
+
+    <br><br>
+    <div class="button">Submit Order (coming soon)</div>
+  </div>
+</section>
+
+
+
+<!-- =============================== FAQ =============================== -->
+<section id="faq">
+  <h2>FAQ</h2>
+
+  <h3>How long does shipping take?</h3>
+  <p>Depends on USPS or UPS service chosen.</p>
+
+  <h3>Do you ship internationally?</h3>
+  <p>Yes — international rates are higher.</p>
+
+  <h3>How do I track my order?</h3>
+  <p>You receive a tracking number by text or email.</p>
+</section>
+
+
+
+<!-- =============================== ABOUT =============================== -->
+<section id="about">
+  <h2>About Charmers</h2>
+  <p>Charmers is a youth-run bracelet company using CLU + USPS to deliver custom designs.</p>
+</section>
+
+
+
+<!-- =============================== CAREERS =============================== -->
+<section id="careers">
+  <h2>Careers</h2>
+  <p>Charmers roles are limited — usually part-time or project-based.</p>
+</section>
+
+
+
+<!-- =============================== SPONSORED CAREERS =============================== -->
+<section id="sponsored">
+  <h2>Sponsored Careers</h2>
+  <p>No active sponsored career listings at this time.</p>
+</section>
+
+
+
+<!-- =============================== LIVE CHAT =============================== -->
+<section id="live">
+  <h2>Live Chat</h2>
+  <p>Coming soon. For now call or text Charmers.</p>
+</section>
+
+
+
+<footer>
+  © 2025 Charmers • All Rights Reserved  
+  <br>
+  support@charmersbiz.org • +1 (931) 623-0425 • +1 (931) 505-1417
+</footer>
+
+</body>
+</html>
